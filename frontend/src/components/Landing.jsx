@@ -37,19 +37,25 @@ const Fireflies = () => {
 };
 
 const WorkflowNode = ({ title, icon, description, step }) => (
-  <div className="relative w-full max-w-2xl bg-white/[0.02] backdrop-blur-xl border border-white/10 rounded-2xl p-6 md:p-8 flex items-center gap-6 shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:bg-white/[0.04] transition-all duration-300 hover:border-brand-cyan/50 hover:shadow-[0_0_30px_rgba(0,229,255,0.2)] group z-10">
-    <div className="flex-shrink-0 w-16 h-16 rounded-full bg-brand-dark border border-brand-cyan/30 flex items-center justify-center relative overflow-hidden group-hover:border-brand-cyan transition-colors">
-      <div className="absolute inset-0 bg-brand-cyan/10 group-hover:bg-brand-cyan/20 transition-colors"></div>
-      <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-brand-cyan relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={icon} />
-      </svg>
-    </div>
-    <div className="flex-1">
-      <div className="flex items-center gap-3 mb-2">
-        <span className="px-3 py-1 bg-brand-cyan/10 border border-brand-cyan/30 text-brand-cyan text-xs font-bold rounded-full tracking-wider">STEP {step}</span>
-        <h3 className="text-xl md:text-2xl font-bold text-white tracking-tight">{title}</h3>
+  <div className="relative w-full h-full bg-brand-card/40 backdrop-blur-xl border border-white/5 rounded-3xl p-8 flex flex-col gap-6 shadow-2xl hover:bg-white/[0.04] transition-all duration-500 hover:border-brand-cyan/40 hover:shadow-[0_0_40px_rgba(0,229,255,0.15)] group hover:-translate-y-2 z-10 overflow-hidden">
+    {/* Decorative background gradient */}
+    <div className="absolute -top-20 -right-20 w-40 h-40 bg-brand-cyan/10 rounded-full blur-[50px] group-hover:bg-brand-cyan/20 transition-colors duration-500"></div>
+    
+    <div className="flex items-center justify-between relative z-10">
+      <div className="w-16 h-16 rounded-2xl bg-brand-dark border border-brand-cyan/20 flex items-center justify-center relative overflow-hidden group-hover:border-brand-cyan transition-colors shadow-inner">
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-cyan/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-brand-cyan relative z-10 group-hover:scale-110 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={icon} />
+        </svg>
       </div>
-      <p className="text-slate-400 leading-relaxed text-sm md:text-base">{description}</p>
+      <span className="text-6xl font-black text-white/5 group-hover:text-brand-cyan/10 transition-colors duration-500 select-none">
+        {step}
+      </span>
+    </div>
+    
+    <div className="relative z-10 mt-auto pt-4">
+      <h3 className="text-2xl font-bold text-white tracking-tight mb-3 group-hover:text-brand-cyan transition-colors">{title}</h3>
+      <p className="text-slate-400 leading-relaxed text-sm">{description}</p>
     </div>
   </div>
 );
@@ -198,47 +204,39 @@ const Landing = ({ onExplore }) => {
         </div>
 
         {/* LangChain Workflow Section */}
-        <div className="w-full max-w-4xl mx-auto py-32 px-4 flex flex-col items-center relative shrink-0">
-          <div className="text-center mb-24 relative z-10">
+        <div className="w-full max-w-6xl mx-auto py-32 px-4 flex flex-col items-center relative shrink-0">
+          <div className="text-center mb-20 relative z-10">
             <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter mb-4" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>Neural Architecture</h2>
             <p className="text-brand-cyan/80 text-lg uppercase tracking-widest font-semibold">How APEX Thinks</p>
           </div>
 
-          <div className="relative w-full flex flex-col items-center gap-12 md:gap-16">
-            {/* Background line connecting nodes */}
-            <div className="absolute top-0 bottom-0 left-1/2 w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-brand-cyan/30 to-transparent z-0 hidden md:block">
-              {/* Flowing animated data packet */}
-              <div className="w-1 h-32 -ml-[1.5px] bg-gradient-to-b from-transparent via-brand-cyan to-transparent opacity-80" style={{ animation: 'flowDown 4s linear infinite' }}></div>
-            </div>
-
-            <div className="md:w-1/2 md:pr-12 self-start flex justify-end">
+          <div className="relative w-full">
+            {/* Background glowing line connecting the grid */}
+            <div className="absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-cyan/30 to-transparent z-0 hidden md:block -translate-y-1/2"></div>
+            <div className="absolute top-0 bottom-0 left-1/2 w-px bg-gradient-to-b from-transparent via-brand-cyan/30 to-transparent z-0 hidden md:block -translate-x-1/2"></div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 relative z-10">
               <WorkflowNode 
                 step="01"
                 title="Understand Intent" 
                 icon="M13 10V3L4 14h7v7l9-11h-7z" 
                 description="APEX reads your message to figure out exactly what degree and which country you are interested in."
               />
-            </div>
-            
-            <div className="md:w-1/2 md:pl-12 self-end flex justify-start">
+              
               <WorkflowNode 
                 step="02"
                 title="Find Programs" 
                 icon="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
                 description="The AI searches for the best universities matching your profile and organizes the data."
               />
-            </div>
 
-            <div className="md:w-1/2 md:pr-12 self-start flex justify-end">
               <WorkflowNode 
                 step="03"
                 title="Build Roadmap" 
                 icon="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" 
                 description="A custom, step-by-step career and application roadmap is generated just for you."
               />
-            </div>
 
-            <div className="md:w-1/2 md:pl-12 self-end flex justify-start">
               <WorkflowNode 
                 step="04"
                 title="Deliver Results" 
