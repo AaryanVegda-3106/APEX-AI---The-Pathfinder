@@ -33,7 +33,8 @@ async def chat_endpoint(req: ChatRequest):
         return ChatResponse(
             response=extraction["response"],
             extracted_domain=extraction.get("extracted_domain"),
-            extracted_country=extraction.get("extracted_country")
+            extracted_country=extraction.get("extracted_country"),
+            extracted_budget=extraction.get("extracted_budget")
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -41,11 +42,12 @@ async def chat_endpoint(req: ChatRequest):
 class TopProgramsReq(BaseModel):
     domain: str
     countries: str
+    budget: Optional[str] = "Any"
 
 @router.post("/top-programs")
 async def top_programs_endpoint(req: TopProgramsReq):
     try:
-        programs_text = generate_top_programs(req.domain, req.countries)
+        programs_text = generate_top_programs(req.domain, req.countries, req.budget)
         return {"text": programs_text}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

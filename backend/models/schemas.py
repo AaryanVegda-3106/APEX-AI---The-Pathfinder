@@ -10,6 +10,7 @@ class ChatResponse(BaseModel):
     step: Optional[int] = None
     extracted_domain: Optional[str] = None
     extracted_country: Optional[str] = None
+    extracted_budget: Optional[str] = None
 
 class ProgramInfo(BaseModel):
     name: str

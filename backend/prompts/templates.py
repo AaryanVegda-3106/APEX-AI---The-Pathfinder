@@ -12,18 +12,20 @@ Always maintain a professional, helpful, and modern tone. Support queries for AL
 # Template for conversational chat and information extraction
 chat_extraction_template = ChatPromptTemplate.from_messages([
     ("system", SYSTEM_INTRODUCTION + """
-You need to extract two pieces of information from the user:
+You need to extract three pieces of information from the user:
 1. Interested domains (e.g., "Computer Science", "History", "Business Administration")
 2. Preferred countries (e.g., "USA", "UK", "Germany")
+3. Tuition fee budget (e.g., "$30k", "50k EUR", "no limit")
 
-If the user hasn't provided both, ask for the missing information in a friendly manner.
-If the user provides them, acknowledge and state you are ready to find programs.
+If the user hasn't provided the domain and country, ask for the missing information in a friendly manner. If budget is not provided, you may optionally ask for it or just assume 'Any'.
+If you have domain and country, acknowledge and state you are ready to find programs.
 
 Respond with a JSON object in exactly this format:
 {{
     "response": "Your conversational reply to the user.",
     "extracted_domain": "Extracted domain, or null if not yet known",
-    "extracted_country": "Extracted country, or null if not yet known"
+    "extracted_country": "Extracted country, or null if not yet known",
+    "extracted_budget": "Extracted budget, or 'Any' if not yet known"
 }}
 """),
     ("human", "Conversation History: {history}\nUser: {message}")
@@ -34,19 +36,20 @@ Respond with a JSON object in exactly this format:
 top_programs_template = ChatPromptTemplate.from_messages([
     ("system", SYSTEM_INTRODUCTION + """
 The user is interested in a Master's degree in {domain} in the following countries: {countries}.
+Their tuition fee budget is: {budget}. Ensure the recommended programs try to respect this budget range if possible.
 Generate a list of highly relevant Master's programs.
 Rank the Top 5 programs based on: Reputation, Research, Industry Exposure, Employability, and Domain Alignment.
 
-For each program, provide the information in the following structured text format:
-Program Name: [Name]
-University Name: [University]
-Location: [City]
-Country: [Country]
-Duration: [Duration]
-Approximate Tuition Fee: [Fee]
-Key Subjects: [Subjects]
-Career Outcomes: [Outcomes]
----
+For each program, provide the information in beautiful Markdown format:
+### [Rank]. [Program Name]
+* **University Name:** [University]
+* **Location:** [City, Country]
+* **Duration:** [Duration]
+* **Approximate Tuition Fee:** [Fee]
+* **Key Subjects:** [Subjects]
+* **Career Outcomes:** [Outcomes]
+
+Use markdown bolding for the labels to make it easy to read.
 """),
     ("human", "Generate the Top 5 Master's programs for my domain and preferred countries.")
 ])
@@ -54,7 +57,7 @@ Career Outcomes: [Outcomes]
 
 # Template for output refinement
 output_refinement_template = ChatPromptTemplate.from_messages([
-    ("system", "You are an AI editor formatting text for a modern UI. Take the raw program data and ensure it perfectly follows the requested structure without any markdown bolding on the keys, just plain text keys as specified."),
+    ("system", "You are an AI editor formatting text for a modern UI. Ensure the output uses rich markdown formatting (headers, bold text, and bullet points) and is perfectly structured for readability. Do not output plain text blocks without newlines. Do NOT wrap your output in ```markdown code blocks."),
     ("human", "{raw_output}")
 ])
 

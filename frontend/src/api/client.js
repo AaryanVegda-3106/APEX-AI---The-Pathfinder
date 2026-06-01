@@ -9,8 +9,8 @@ export const sendChatMessage = async (sessionId, message) => {
   return response.data;
 };
 
-export const getTopPrograms = async (domain, countries) => {
-  const response = await api.post('/top-programs', { domain, countries });
+export const getTopPrograms = async (domain, countries, budget = "Any") => {
+  const response = await api.post('/top-programs', { domain, countries, budget });
   return response.data.text;
 };
 

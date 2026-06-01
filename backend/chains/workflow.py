@@ -9,6 +9,16 @@ from prompts.templates import (
     summary_template
 )
 
+def clean_markdown(text: str) -> str:
+    text = text.strip()
+    if text.startswith("```markdown"):
+        text = text[len("```markdown"):].strip()
+    elif text.startswith("```"):
+        text = text[3:].strip()
+    if text.endswith("```"):
+        text = text[:-3].strip()
+    return text
+
 def extract_chat_info(history: str, message: str):
     llm = get_llm()
     chain = chat_extraction_template | llm | StrOutputParser()
@@ -24,30 +34,31 @@ def extract_chat_info(history: str, message: str):
     except Exception as e:
         # Fallback if parsing fails
         return {
-            "response": result,
+            "response": clean_markdown(result),
             "extracted_domain": None,
-            "extracted_country": None
+            "extracted_country": None,
+            "extracted_budget": "Any"
         }
 
-def generate_top_programs(domain: str, countries: str):
+def generate_top_programs(domain: str, countries: str, budget: str = "Any"):
     llm = get_llm()
     
     # Generate initial raw text
     gen_chain = top_programs_template | llm | StrOutputParser()
-    raw_programs = gen_chain.invoke({"domain": domain, "countries": countries})
+    raw_programs = gen_chain.invoke({"domain": domain, "countries": countries, "budget": budget})
     
     # Refine output
     refine_chain = output_refinement_template | llm | StrOutputParser()
     refined_programs = refine_chain.invoke({"raw_output": raw_programs})
     
-    return refined_programs
+    return clean_markdown(refined_programs)
 
 def generate_roadmap(domain: str):
     llm = get_llm()
     chain = roadmap_template | llm | StrOutputParser()
-    return chain.invoke({"domain": domain})
+    return clean_markdown(chain.invoke({"domain": domain}))
 
 def generate_summary(domain: str, programs_text: str, roadmap_text: str):
     llm = get_llm()
     chain = summary_template | llm | StrOutputParser()
-    return chain.invoke({"domain": domain, "programs": programs_text, "roadmap": roadmap_text})
+    return clean_markdown(chain.invoke({"domain": domain, "programs": programs_text, "roadmap": roadmap_text}))
